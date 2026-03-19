@@ -2,6 +2,7 @@ package com.phelipe.ScreenMatch.model.modelTitulo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.phelipe.ScreenMatch.Exception.ExceptionTitulo.ExceptionInjectionJsonModel;
+import com.phelipe.ScreenMatch.model.modelTitulo.entity.EntityMedia;
 
 import java.time.LocalDateTime;
 

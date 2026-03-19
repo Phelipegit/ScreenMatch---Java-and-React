@@ -6,16 +6,13 @@ import java.util.Map;
 
 @Getter
 public class ErrorResponse {
-    private final boolean success;
-    private final String message;
-    private final Map<String, String> errors;
-    private final LocalDateTime timestamp;
+    private boolean success;
+    private String message;
+    private LocalDateTime timestamp;
 
-    public ErrorResponse(boolean success, String message,
-                         Map<String, String> errors, LocalDateTime timestamp) {
+    public ErrorResponse(boolean success, String message, LocalDateTime timestamp) {
         this.success = success;
         this.message = message;
-        this.errors = errors;
         this.timestamp = timestamp;
     }
 }

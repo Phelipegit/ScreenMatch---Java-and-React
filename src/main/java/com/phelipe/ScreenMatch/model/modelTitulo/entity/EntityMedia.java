@@ -1,4 +1,4 @@
-package com.phelipe.ScreenMatch.model.modelTitulo;
+package com.phelipe.ScreenMatch.model.modelTitulo.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

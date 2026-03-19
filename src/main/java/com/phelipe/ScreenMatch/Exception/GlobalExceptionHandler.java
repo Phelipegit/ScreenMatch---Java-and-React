@@ -8,40 +8,43 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // 1. Validação de campos (@NotBlank, @Min, @Max, @Size, etc.)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> validationError(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
-        );
-        ErrorResponse response = new ErrorResponse(
-                false, "Validação falhou!", errors, LocalDateTime.now()
-        );
+        // pega a primeira mensagem de erro como message
+        String message = "Houve erro de validação.";
+        Map<String, String> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
+                .collect(
+                        java.util.stream.Collectors.toMap(
+                                e -> e.getField(),
+                                e -> e.getDefaultMessage()
+                        )
+                );
+
+        if (!fieldErrors.isEmpty()) {
+            message = fieldErrors.values().iterator().next();
+        }
+
+        ErrorResponse response = new ErrorResponse(false, message, LocalDateTime.now());
         return ResponseEntity.badRequest().body(response);
     }
 
+    // 2. Erros de negócio (ScreenMatchException)
     @ExceptionHandler(ScreenMatchException.class)
     public ResponseEntity<ErrorResponse> businessError(ScreenMatchException ex) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("code", ex.getCode());
-        ErrorResponse response = new ErrorResponse(
-                false, ex.getMessage(), errors, LocalDateTime.now()
-        );
+        ErrorResponse response = new ErrorResponse(false, ex.getMessage(), LocalDateTime.now());
         return ResponseEntity.status(422).body(response);
     }
 
+    // 3. Erro genérico
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> genericError(Exception ex) {
-        Map<String, String> errors = Map.of("error", "Erro interno do servidor");
-        ErrorResponse response = new ErrorResponse(
-                false, "Erro interno!", errors, LocalDateTime.now()
-        );
+        ErrorResponse response = new ErrorResponse(false, "Erro interno!", LocalDateTime.now());
         return ResponseEntity.internalServerError().body(response);
     }
 }
